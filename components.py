@@ -9,7 +9,7 @@ class Ground:
         self.rect = pygame.Rect(self.x, self.y, win_width, 5)
 
     def draw(self, window):
-        pygame.draw.rect(window, (0, 255, 0), self.rect)
+        pygame.draw.rect(window, (255, 255, 255), self.rect)
 
 class Pipes:
     width = 15
@@ -25,9 +25,9 @@ class Pipes:
 
     def draw(self, window):
         self.bottom_rect = pygame.Rect(self.x, Ground.ground_level - self.bottom_height, self.width, self.bottom_height)
-        pygame.draw.rect(window, (255, 0, 0), self.bottom_rect)
+        pygame.draw.rect(window, (255, 255, 255), self.bottom_rect)
         self.top_rect = pygame.Rect(self.x, 0, self.width, self.top_height)
-        pygame.draw.rect(window, (255, 0, 0), self.top_rect)
+        pygame.draw.rect(window, (255, 255, 255), self.top_rect)
 
     def update(self):
         self.x -= 1

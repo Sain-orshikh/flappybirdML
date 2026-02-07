@@ -11,6 +11,7 @@ class Population:
     def update_live_player(self):
         for p in self.players:
             if p.alive:
+                p.look()
                 p.think()
                 p.draw(config.window)
                 p.update(config.ground)
