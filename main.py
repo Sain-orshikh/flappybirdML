@@ -60,7 +60,7 @@ def main():
             config.passed = 0
             population.natural_selection()
 
-        clock.tick(480)
+        clock.tick(60)
         pygame.display.flip()
 
 main()
