@@ -62,7 +62,7 @@ class Population:
         player_bin = []
         species_bin = []
         for s in self.species:
-            if s.staleness >= 2:
+            if s.staleness >= 8:
                 if len(self.species) > len(species_bin) + 1:
                     species_bin.append(s)
                     for p in s.players:
@@ -85,7 +85,6 @@ class Population:
     def next_gen(self):
         children = []
 
-        # Handle edge case where all species are empty
         if not self.species:
             print("WARNING: No species available, creating new population")
             for i in range(self.size):

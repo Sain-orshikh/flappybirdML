@@ -7,7 +7,7 @@ class Player:
     
     def __init__(self):
         #Bird
-        self.x, self.y = 50, 200
+        self.x, self.y = 50, 300
         self.rect = pygame.Rect(self.x, self.y, 20, 20)
         self.color = random.randint(100, 255), random.randint(100, 255), random.randint(100, 255)
         self.velocity = 0
@@ -16,9 +16,10 @@ class Player:
         self.lifespan = 0
         #AI
         self.decision = None
-        self.vision = [0.5, 1, 0.5]
-        self.inputs = 3
+        self.vision = [0.5, 1, 0.5, 0.5]
+        self.inputs = 4
         self.fitness = 0
+        self.alignment_bonus = 0
         self.brain = brain.Brain(self.inputs)
         self.brain.generate_net()
         self.brain.feed_forward(self.vision)
@@ -47,6 +48,16 @@ class Player:
             if self.velocity > 5:
                 self.velocity = 5
             self.lifespan += 1
+            
+            # Reward alignment
+            if config.pipes:
+                closest = self.closest_pipe()
+                if closest:
+                    if closest.top_rect.bottom < self.y < closest.bottom_rect.top:
+                        self.alignment_bonus += 2
+            
+            if self.y < 80 or self.y > 450:
+                self.fitness -= 0.1
         else:
             self.alive = False
             self.flap = False
@@ -82,13 +93,17 @@ class Player:
             self.vision[2] = max(0, self.closest_pipe().bottom_rect.top - self.rect.center[1]) / 500
             pygame.draw.line(config.window, self.color, self.rect.center, (self.rect.center[0], config.pipes[0].bottom_rect.top))
 
+            #Velocity 
+            self.vision[3] = (self.velocity + 5) / 10
+
     def think(self):
         self.decision = self.brain.feed_forward(self.vision)
-        if self.decision > 0.73:
+        if self.decision > 0.5:
             self.bird_flap()
 
     def calculate_fitness(self):
-        self.fitness = self.lifespan
+        self.fitness = self.lifespan + self.alignment_bonus
+
 
     def clone(self):
         clone = Player()

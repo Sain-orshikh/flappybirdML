@@ -18,16 +18,16 @@ class Brain:
                 self.nodes[i].layer = 0
 
             #Create bias node
-            self.nodes.append(node.Node(3))
-            self.nodes[3].layer = 0
+            self.nodes.append(node.Node(4))
+            self.nodes[4].layer = 0
 
             #Create output layer
-            self.nodes.append(node.Node(4))
-            self.nodes[4].layer = 1
+            self.nodes.append(node.Node(5))
+            self.nodes[5].layer = 1
 
             #Create connections
-            for i in range(0, 4):
-                self.connections.append(connection.Connection(self.nodes[i], self.nodes[4], random.uniform(-1, 1)))
+            for i in range(0, 5):
+                self.connections.append(connection.Connection(self.nodes[i], self.nodes[5], random.uniform(-0.5, 0.5)))
     
     def connect_nodes(self):
         for i in range(0, len(self.nodes)):
@@ -48,12 +48,12 @@ class Brain:
         for i in range(0, self.inputs):
             self.nodes[i].output_value = vision[i]
 
-        self.nodes[3].output_value = 1
+        self.nodes[4].output_value = 1
 
         for i in range(0, len(self.net)):
             self.net[i].activate()
         
-        output_value = self.nodes[4].output_value
+        output_value = self.nodes[5].output_value
 
         for i in range(0, len(self.nodes)):
             self.nodes[i].input_value = 0
