@@ -13,10 +13,12 @@ class Player:
         self.velocity = 0
         self.flap = False
         self.alive = True
+        self.lifespan = 0
         #AI
         self.decision = None
         self.vision = [0.5, 1, 0.5]
         self.inputs = 3
+        self.fitness = 0
         self.brain = brain.Brain(self.inputs)
         self.brain.generate_net()
         self.brain.feed_forward(self.vision)
@@ -44,6 +46,7 @@ class Player:
             self.rect.y = int(self.y)
             if self.velocity > 5:
                 self.velocity = 5
+            self.lifespan += 1
         else:
             self.alive = False
             self.flap = False
@@ -83,3 +86,14 @@ class Player:
         self.decision = self.brain.feed_forward(self.vision)
         if self.decision > 0.73:
             self.bird_flap()
+
+    def calculate_fitness(self):
+        self.fitness = self.lifespan
+
+    def clone(self):
+        clone = Player()
+        clone.fitness = self.fitness
+        clone.brain = self.brain.clone()
+        clone.brain.generate_net()
+        return clone
+        

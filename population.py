@@ -1,9 +1,14 @@
 import config
 import player
+import math
+import species
+import operator
 
 class Population:
     def __init__(self, size):
         self.players = []
+        self.generation = 1
+        self.species = []
         self.size = size
         for i in range(self.size):
             self.players.append(player.Player())
@@ -17,6 +22,80 @@ class Population:
                 p.update(config.ground)
     
     #Returns true when all players die
+
+    def natural_selection(self):
+        print('SPECIATE')
+        self.speciate()
+
+        print('CALCULATE FITNESS')
+        self.calculate_fitness()
+
+        print('SORT BY FITNESS')
+        self.sort_species_by_fitness()
+
+        print('CHILDREN FOR NEXT GEN')
+        self.next_gen()
+
+    def speciate(self):
+        for s in self.species:
+            s.players = []
+        for p in self.players:
+            add_to_species = False
+            for s in self.species:
+                if s.similarity(p.brain):
+                    s.players.append(p)
+                    add_to_species = True        
+                    break
+            if not add_to_species:
+                self.species.append(species.Species(p))
+
+    def calculate_fitness(self):
+        for p in self.players:
+            p.calculate_fitness()
+        for s in self.species:
+            s.calculate_average_fitness()
+
+    def sort_species_by_fitness(self):
+        for s in self.species:
+            s.sort_players_by_fitness()
+        self.species.sort(key=operator.attrgetter('benchmark_fitness'), reverse=True)
+        # Remove empty species
+        self.species = [s for s in self.species if s.players]
+
+    def next_gen(self):
+        children = []
+
+        # Handle edge case where all species are empty
+        if not self.species:
+            print("WARNING: No species available, creating new population")
+            for i in range(self.size):
+                children.append(player.Player())
+            self.players = children
+            self.generation += 1
+            return
+
+        for s in self.species:
+            children.append(s.champion.clone())
+        
+        children_per_species = math.floor((self.size - len(self.species)) / len(self.species))
+
+        for s in self.species:
+            for i in range(0, children_per_species):
+                baby = s.offspring()
+                if baby:
+                    children.append(baby)
+        
+        while len(children) < self.size:
+            baby = self.species[0].offspring()
+            if baby:
+                children.append(baby)
+
+        self.players = []
+
+        for child in children:
+            self.players.append(child)
+
+        self.generation +=1
 
     def extinct(self):
         for p in self.players:

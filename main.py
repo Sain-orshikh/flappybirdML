@@ -40,7 +40,8 @@ def main():
         if not population.extinct():
             population.update_live_player()
         else:
-            pass
+            config.pipes.clear()
+            population.natural_selection()
 
         clock.tick(60)
         pygame.display.flip()
